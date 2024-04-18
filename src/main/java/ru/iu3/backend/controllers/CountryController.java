@@ -9,12 +9,12 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.iu3.backend.models.Country;
 import ru.iu3.backend.repositories.CountryRepository;
 
-
+import ru.iu3.backend.models.Artists;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.*;
 @RestController
 @RequestMapping("/api/v1")
 public class CountryController {
@@ -79,7 +79,14 @@ public class CountryController {
         return ResponseEntity.ok(resp);
     }
 
-
+    @GetMapping("/countries/{id}/artists")
+    public ResponseEntity<List<Artists>> getCountryArtists(@PathVariable(value = "id") Long countryId) {
+        Optional<Country> cc = countryRepository.findById(countryId);
+        if (cc.isPresent()) {
+            return ResponseEntity.ok(cc.get().artists);
+        }
+        return ResponseEntity.ok(new ArrayList<Artists>());
+    }
 
 
 
