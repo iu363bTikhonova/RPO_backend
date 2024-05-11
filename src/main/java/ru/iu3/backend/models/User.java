@@ -17,7 +17,8 @@ public class User {
     public User(Long id) {
         this.id = id;
     }
-
+    @Transient
+    public String np;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

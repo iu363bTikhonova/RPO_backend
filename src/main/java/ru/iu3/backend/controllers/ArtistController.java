@@ -6,10 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.iu3.backend.models.Artists;
-import ru.iu3.backend.models.Country;
 import ru.iu3.backend.repositories.ArtistsRepository;
 import ru.iu3.backend.repositories.CountryRepository;
-
+import javax.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
+import ru.iu3.backend.tools.DataValidationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1")
 
-public class ArtistsController {
+public class ArtistController {
 
     @Autowired
     CountryRepository countryRepository;
@@ -28,9 +32,16 @@ public class ArtistsController {
     ArtistsRepository artistsRepository;
 
     @GetMapping("/artists")
-    public List
-    getAllArtists() {
-        return artistsRepository.findAll();
+    public Page getAllArtists(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        return artistsRepository.findAll(
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
+    }
+
+    @GetMapping("/artists/{id}")
+    public ResponseEntity getArtist(@PathVariable(value = "id") Long artistId) throws DataValidationException {
+        Artists artists = artistsRepository.findById(artistId).
+                orElseThrow(() -> new DataValidationException("Художник с таким индексом не найден"));
+        return ResponseEntity.ok(artists);
     }
 
 
@@ -39,24 +50,15 @@ public class ArtistsController {
     public ResponseEntity<Object> createArtist(@RequestBody Artists artists)
             throws Exception {
         try {
-            Optional<Country>
-                    cc = countryRepository.findById(artists.country.id);
-            if (cc.isPresent()) {
-                artists.country = cc.get();
-            }
-            Artists nc = artistsRepository.save(artists);
-            return new ResponseEntity<Object>(nc, HttpStatus.OK);
+            Artists newArtists = artistsRepository.save(artists);
+            return new ResponseEntity<Object>(newArtists, HttpStatus.OK);
         }
-        catch(Exception ex) {
-            String error;
-            if (ex.getMessage().contains("artists.name_UNIQUE"))
-                error = "artistalreadyexists";
-            else
-                error = "undefinederror";
-            Map<String, String>
-                    map =  new HashMap<>();
-            map.put("error", error);
-            return ResponseEntity.ok(map);
+        catch(Exception exception) {
+            if (exception.getMessage().contains("artists.name_UNIQUE")) {
+                throw new DataValidationException("Эта страна уже есть в базе");
+            } else {
+                throw new DataValidationException("Неизвестная ошибка");
+            }
         }
     }
 
@@ -91,6 +93,11 @@ public class ArtistsController {
         else
             resp.put("deleted", Boolean.FALSE);
         return ResponseEntity.ok(resp);
+    }
+    @PostMapping("/deleteartists")
+    public ResponseEntity deleteArtists(@Valid @RequestBody List artists) {
+        artistsRepository.deleteAll(artists);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

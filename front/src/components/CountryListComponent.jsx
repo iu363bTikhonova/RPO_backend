@@ -4,7 +4,7 @@ import { faTrash, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons'
 import Alert from '/home/user_1/AndroidStudioProjects/backend/front/src/components/Alert.jsx'
 import BackendService from "/home/user_1/AndroidStudioProjects/backend/front/src/services/BackendService.jsx";
 import { useNavigate } from 'react-router-dom';
-
+import PaginationComponent from "./PaginationComponent";
 const CountryListComponent = props => {
     const [message, setMessage] = useState();
     const [countries, setCountries] = useState([]);
@@ -13,7 +13,9 @@ const CountryListComponent = props => {
     const [checkedItems, setCheckedItems] = useState([]);
     const [hidden, setHidden] = useState(false);
     const navigate = useNavigate();
-
+    const [page, setPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+    const limit = 2;
     const setChecked = v => {
         setCheckedItems(Array(countries.length).fill(v));
     }
@@ -31,7 +33,9 @@ const CountryListComponent = props => {
         const isChecked = e.target.checked;
         setChecked(isChecked);
     }
-
+    const onPageChanged = cp => {
+        refreshCountries(cp - 1);
+    }
     const deleteCountriesClicked = () => {
         let x = [];
         countries.map ((t, idx) => {
@@ -55,12 +59,19 @@ const CountryListComponent = props => {
         }
     }
 
-    const refreshCountries = () => {
-        BackendService.retrieveAllCountries().then(
+  const refreshCountries = cp => {
+         BackendService.retrieveAllCountries(cp, limit).then(
             resp => {
-                setCountries(resp.data);
+                setCountries(resp.data.content);
                 setHidden(false);
-            }).catch(() => {setHidden(true)}).finally(() => setChecked(false))
+                setTotalCount(resp.data.totalElements);
+                           setPage(cp);
+                        }
+                    ).catch(() => {
+                        setHidden(true);
+                        setTotalCount(0);
+                    })
+                    .finally(() => setChecked(false))
     }
 
     useEffect(() => {
@@ -92,6 +103,11 @@ const CountryListComponent = props => {
     return (
         <div className="m-4">
             <div className="row my-2">
+                 <PaginationComponent
+                                    totalRecords={totalCount}
+                                    pageLimit={limit}
+                                    pageNeighbours={1}
+                                    onPageChanged={onPageChanged}/>
                 <h3>Страны</h3>
                 <div className="btn-toolbar">
                     <div className="btn-group ms-auto">
@@ -113,13 +129,13 @@ const CountryListComponent = props => {
                 <table className="table table-sm">
                     <thead className="thead-light">
                         <tr>
-                            <th>Название</th>
-                            <th>
-                                <div className="btn-toolbar pb-1">
-                                    <div className="btn-group ms-auto">
-                                        <input type="checkbox" onChange={handleGroupCheckChange}/>
-                                    </div>
+                                               <th>Название</th>
+                                               <th>
+                                                   <div className="btn-toolbar pb-1">
+                                                       <div className="btn-group ms-auto">
+                                                           <input type="checkbox" onChange={handleGroupCheckChange}/>
                                 </div>
+                                  </div>
                             </th>
                         </tr>
                     </thead>

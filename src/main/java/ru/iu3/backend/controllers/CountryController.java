@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.*;
 import javax.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.iu3.backend.tools.DataValidationException;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,9 +28,9 @@ public class CountryController {
     CountryRepository countryRepository;
 
     @GetMapping("/countries")
-    public List
-    getAllCountries() {
-        return countryRepository.findAll();
+    public Page<Country> getAllCountries(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        return countryRepository.findAll(
+                PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
     }
 
     @PostMapping("/countries")
