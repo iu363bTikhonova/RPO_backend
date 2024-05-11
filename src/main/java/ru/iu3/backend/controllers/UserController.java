@@ -14,7 +14,7 @@ import ru.iu3.backend.models.User;
 import ru.iu3.backend.repositories.CountryRepository;
 import ru.iu3.backend.repositories.MuseumRepository;
 import ru.iu3.backend.repositories.UserRepository;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.*;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController

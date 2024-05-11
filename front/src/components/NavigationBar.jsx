@@ -1,11 +1,11 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faUser } from '@fortawesome/free-solid-svg-icons'
+import {faBars, faHome, faUser} from "@fortawesome/free-solid-svg-icons";
 import {Link} from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
-import Utils from "../utils/Utils";
-import BackendService from "../services/BackendService";
+import Utils from "/home/user_1/AndroidStudioProjects/backend/front/src/Utils.jsx";
+import BackendService from "/home/user_1/AndroidStudioProjects/backend/front/src/services/BackendService.jsx";
 
 
 class NavigationBarClass extends React.Component {
@@ -34,13 +34,17 @@ class NavigationBarClass extends React.Component {
         let uname = Utils.getUserName();
         return (
             <Navbar bg="light" expand="lg">
-                <Navbar.Brand><FontAwesomeIcon icon={faHome} />{' '}My RPO</Navbar.Brand>
+                <button type="button"
+                                            className="btn btn-outline-secondary mr-2"
+                                            onClick={this.props.toggleSideBar}>
+                                        <FontAwesomeIcon icon={ faBars } />
+                                </button>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/home">Home</Nav.Link>
                         <Nav.Link onClick={this.goHome}>Another Home</Nav.Link>
-                        <Nav.Link onClick={() =>{ this.props.navigate("\home")}}>Yet Another Home</Nav.Link>
+                        <Nav.Link onClick={() =>{ this.props.navigate("/home")}}>Yet Another Home</Nav.Link>
                     </Nav>
                     <Navbar.Text>{uname}</Navbar.Text>
                     { uname &&

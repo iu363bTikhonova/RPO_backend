@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import BackendService from '../services/BackendService';
-import Utils from "../utils/Utils";
+import BackendService from '/home/user_1/AndroidStudioProjects/backend/front/src/services/BackendService.jsx';
+import Utils from "/home/user_1/AndroidStudioProjects/backend/front/src/Utils.jsx";
 import {useNavigate} from "react-router-dom";
 import {connect, useDispatch} from 'react-redux'
 import {userActions} from "/home/user_1/AndroidStudioProjects/backend/front/src/Rdx.jsx";

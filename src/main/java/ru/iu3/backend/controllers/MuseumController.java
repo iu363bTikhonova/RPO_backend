@@ -10,7 +10,7 @@ import ru.iu3.backend.models.Country;
 import ru.iu3.backend.models.Museum;
 import ru.iu3.backend.repositories.CountryRepository;
 import ru.iu3.backend.repositories.MuseumRepository;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.*;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController("/api/v1")

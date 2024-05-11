@@ -10,7 +10,7 @@ import ru.iu3.backend.models.Country;
 import ru.iu3.backend.repositories.ArtistsRepository;
 import ru.iu3.backend.repositories.CountryRepository;
 
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
